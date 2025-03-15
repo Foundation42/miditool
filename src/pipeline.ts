@@ -33,18 +33,18 @@ CRITICAL INSTRUCTIONS: You MUST provide a complete, valid MIDI file in hex forma
 as a continuous string of hexadecimal bytes separated by spaces. The file MUST play correctly in standard MIDI players.
 
 Your MIDI file MUST follow these EXACT requirements:
-1. Use Format 1 (multiple tracks) MIDI file structure
+1. Use Format 0 (single track) MIDI file structure for simplicity
 2. Start with the standard MIDI header "4D 54 68 64" (MThd)
-3. Include EXACTLY one header chunk followed by exactly TWO track chunks
-4. Have each track chunk start with "4D 54 72 6B" (MTrk)
-5. First track must contain ONLY time signature and tempo meta events
-6. Second track must contain the actual note events
-7. Set the instrument to PIANO (program change event: C0 00) at the beginning of the second track
-8. Use note-on (90 nn 7F) events with velocity 127 (7F) for loudness
-9. CRITICAL: For EVERY note-on event, include a matching note-off event (80 nn 00) with the SAME note number
-10. Set tempo to 120 BPM using meta event (FF 51 03 07 A1 20) in the first track
-11. Include 4/4 time signature using meta event (FF 58 04 04 02 18 08) in the first track
-12. CRITICAL: Use NON-ZERO delta times between note events (do not play all notes simultaneously)
+3. Include EXACTLY one header chunk followed by exactly ONE track chunk
+4. Have the track chunk start with "4D 54 72 6B" (MTrk)
+5. Set the instrument to PIANO (program change event: C0 00) at the beginning of the track
+6. Include time signature (FF 58 04 04 02 18 08) and tempo (FF 51 03 07 A1 20) meta events at the start
+7. Use note-on (90 nn 7F) events with velocity 127 (7F) for loudness
+8. CRITICAL: For EVERY note-on event, include a matching note-off event (80 nn 00) with the SAME note number
+9. Set tempo to 120 BPM using meta event (FF 51 03 07 A1 20)
+10. Include 4/4 time signature using meta event (FF 58 04 04 02 18 08)
+11. CRITICAL: Use NON-ZERO delta times between note events (do not play all notes simultaneously)
+12. End with a proper end-of-track marker (FF 2F 00)
 
 CRITICALLY IMPORTANT TIMING RULES:
 - Each delta time MUST begin with a non-zero value (e.g., 60 or 40 or 81 40)
@@ -52,44 +52,37 @@ CRITICALLY IMPORTANT TIMING RULES:
 - The delta time between events determines note timing and must reflect musical rhythms
 - Quarter notes should have higher delta time values than eighth notes
 
-For a valid Format 1 MIDI file with a piano track playing a C major scale, follow this EXACT template:
+For a valid Format 0 MIDI file with a piano track playing a C major scale, follow this EXACT template:
 
-4D 54 68 64 00 00 00 06 00 01 00 02 01 E0 4D 54 72 6B 00 00 00 14 
-00 FF 58 04 04 02 18 08 00 FF 51 03 07 A1 20 00 FF 2F 00 4D 54 72 6B 
-00 00 00 3B 00 C0 00 00 90 3C 7F 60 80 3C 00 00 90 3E 7F 60 80 3E 00 
-00 90 40 7F 60 80 40 00 00 90 41 7F 60 80 41 00 00 90 43 7F 60 
-80 43 00 00 90 45 7F 60 80 45 00 00 90 47 7F 60 80 47 00 00 90 48 7F 
-60 80 48 00 00 FF 2F 00
+4D 54 68 64 00 00 00 06 00 00 00 01 01 E0 4D 54 72 6B 00 00 00 43 
+00 FF 58 04 04 02 18 08 00 FF 51 03 07 A1 20 00 C0 00 00 90 3C 7F 60 
+80 3C 00 00 90 3E 7F 60 80 3E 00 00 90 40 7F 60 80 40 00 00 90 41 7F 
+60 80 41 00 00 90 43 7F 60 80 43 00 00 90 45 7F 60 80 45 00 00 90 47 
+7F 60 80 47 00 00 90 48 7F 60 80 48 00 00 FF 2F 00
 
 Key elements explained:
-- 4D 54 68 64 00 00 00 06 00 01 00 02 01 E0: Header chunk (format 1, 2 tracks, 480 ticks per quarter note)
-- 4D 54 72 6B 00 00 00 14: First track header with length
+- 4D 54 68 64 00 00 00 06 00 00 00 01 01 E0: Header chunk (format 0, 1 track, 480 ticks per quarter note)
+- 4D 54 72 6B 00 00 00 43: Track header with length (67 bytes)
 - 00 FF 58 04 04 02 18 08: Time signature meta event (4/4)
 - 00 FF 51 03 07 A1 20: Tempo meta event (120 BPM)
-- 00 FF 2F 00: End of first track
-- 4D 54 72 6B 00 00 00 3B: Second track header with length
 - 00 C0 00: Program change to piano (instrument 0)
 - 00 90 3C 7F: Note-on for C4 with velocity 127
 - 60: Delta time (96 ticks, a quarter note duration)
 - 80 3C 00: Note-off for C4
-- 00 90 3E 7F: Note-on for D4 with velocity 127
-- 60: Delta time (96 ticks)
-- 80 3E 00: Note-off for D4
 - (Pattern continues for the scale)
-- 00 FF 2F 00: End of second track
+- 00 FF 2F 00: End of track
 
 CRITICALLY IMPORTANT FOR PLAYBACK:
-1. Track lengths MUST be PRECISELY calculated:
-   - First track length (00 00 00 14) = 20 bytes, which is exactly the size from after this value to the next MTrk
+1. Track length MUST be PRECISELY calculated:
    - Count EVERY byte precisely - an error of even 1 byte will break playback
-   - Check track length by counting bytes from after the length field to just before the next track header
+   - Calculate track length by counting all bytes from after the length field to the end of the track
 2. Use PROPER delta times - NEVER use 00 for delta time between sequential notes
 3. ALWAYS pair each note-on with a note-off for the SAME note number
 4. Maintain chronological order of events (note-on → delta time → note-off → delta time → next note-on)
+5. Include a proper end-of-track marker (FF 2F 00) at the end
 
 IMPORTANT FOR COUNTING TRACK BYTES:
-- First track bytes: FF 58 04 04 02 18 08 + 00 FF 51 03 07 A1 20 + 00 FF 2F 00 = 20 bytes
-- This matches exactly the track length 00 00 00 14 (decimal 20)
+- Count all bytes after the track length field up to and including the end-of-track marker
 - Double-check your byte counting before responding!
 
 FOLLOW THIS TEMPLATE EXACTLY - This is a known good MIDI format that plays correctly in all players.`,
@@ -124,6 +117,7 @@ export class MusicGenerationPipeline {
   
   /**
    * Generate a MIDI clip for the given project/group/track/clip
+   * Uses a single-phase approach (idea generation followed by MIDI generation)
    * 
    * @param project - The music project
    * @param group - The group containing the track
@@ -249,36 +243,46 @@ export class MusicGenerationPipeline {
         throw new Error("Generated MIDI data is too short to be valid");
       }
       
-      // LLM validation if debug mode is enabled
-      if (this.config.debug) {
-        try {
-          console.log("Performing LLM validation of MIDI data...");
-          const validationPath = join(this.config.outputDir, project.id, group.id, track.id, `${clip.id}_validation.txt`);
-          const validationReport = await validateMidiHex(midiHex, validationPath);
-          
-          // Check for critical issues in the validation report
-          const hasCriticalIssues = this.checkForCriticalIssues(validationReport);
-          
-          if (hasCriticalIssues) {
-            console.warn("⚠️ WARNING: LLM validation detected potential issues with the MIDI data");
-            console.warn("See the validation report for details: " + validationPath);
-          } else {
-            console.log("✅ LLM validation passed with no critical issues detected");
-          }
-        } catch (error) {
-          console.error("Error during LLM validation:", error);
-          // Don't fail the generation process for validation errors
+      // Always perform LLM validation (not just in debug mode)
+      let validationPassed = true;
+      try {
+        console.log("Performing LLM validation of MIDI data...");
+        const validationPath = join(this.config.outputDir, project.id, group.id, track.id, `${clip.id}_validation.txt`);
+        const validationReport = await validateMidiHex(midiHex, validationPath);
+        
+        // Check for critical issues in the validation report
+        const hasCriticalIssues = this.checkForCriticalIssues(validationReport);
+        
+        if (hasCriticalIssues) {
+          console.warn("⚠️ WARNING: LLM validation detected potential issues with the MIDI data");
+          console.warn("See the validation report for details: " + validationPath);
+          validationPassed = false;
+        } else {
+          console.log("✅ LLM validation passed with no critical issues detected");
         }
+      } catch (error) {
+        console.error("Error during LLM validation:", error);
+        validationPassed = false; // Fail safe - if validation errors out, don't save the file
       }
       
-      // Save the MIDI file
-      const filename = `${clip.id}.mid`;
-      const outputPath = join(this.config.outputDir, project.id, group.id, track.id, filename);
-      await saveMidiFile(midiBytes, outputPath);
-      
+      // Only save the MIDI file if validation passes
+      let outputPath = "";
       console.log(`Generated clip: ${clip.name}`);
-      console.log(`MIDI file saved to: ${outputPath}`);
-      console.log(`To play the generated MIDI file: bun run play ${outputPath}`);
+      
+      if (validationPassed) {
+        const filename = `${clip.id}.mid`;
+        outputPath = join(this.config.outputDir, project.id, group.id, track.id, filename);
+        await saveMidiFile(midiBytes, outputPath);
+        console.log(`✅ MIDI file saved to: ${outputPath}`);
+        console.log(`To play the generated MIDI file: bun run play ${outputPath}`);
+      } else {
+        console.error("❌ MIDI validation failed - valid file not saved");
+        // Save the invalid MIDI data with a .invalid extension for debugging
+        const invalidFilename = `${clip.id}.invalid.mid`;
+        const invalidPath = join(this.config.outputDir, project.id, group.id, track.id, invalidFilename);
+        await saveMidiFile(midiBytes, invalidPath);
+        console.log(`Invalid MIDI data saved to: ${invalidPath} for debugging`);
+      }
       return updatedClip;
     } catch (error) {
       console.error(`Error generating clip ${clip.name}:`, error);
@@ -554,5 +558,208 @@ Length: ${extractedHex.split(/\s+/).length} bytes
     
     track.clips.push(clip);
     return clip;
+  }
+  
+  /**
+   * Generate a MIDI clip using a two-phase approach for improved reliability
+   * Phase 1: Generate ideas and MIDI structure
+   * Phase 2: Fix any validation issues using LLM analysis
+   * 
+   * @param project - The music project
+   * @param group - The group containing the track
+   * @param track - The track containing the clip
+   * @param clip - The clip to generate
+   * @param maxRetries - Maximum number of retries for MIDI generation (default: 3)
+   * @returns Updated clip with MIDI data
+   */
+  async generateClipTwoPhase(
+    project: Project,
+    group: Group,
+    track: Track,
+    clip: Clip,
+    maxRetries: number = 3
+  ): Promise<Clip> {
+    console.log(`Generating clip with two-phase approach: ${clip.name}`);
+    
+    // Build context for the LLM
+    const context = this.buildContext(project, group, track, clip);
+    
+    // Clone the clip to avoid modifying the original
+    const updatedClip: Clip = {
+      ...clip,
+      updatedAt: new Date()
+    };
+    
+    // Wait for capacity if we're at the limit
+    await this.waitForCapacity();
+    
+    try {
+      this.activeRequests++;
+      
+      // Phase 1: Generate musical ideas
+      const ideaStage = this.config.stages[0];
+      if (!ideaStage) {
+        throw new Error("Missing idea generation stage in pipeline configuration");
+      }
+      console.log(`Running stage: ${ideaStage.name}`);
+      
+      // Prepare debug paths if debug mode is enabled
+      let ideaLogPath;
+      if (this.config.debug) {
+        ideaLogPath = join(
+          this.config.outputDir, 
+          project.id, 
+          group.id, 
+          track.id, 
+          `${clip.id}_idea_stage.log`
+        );
+        console.log(`Debug mode enabled, logging to ${ideaLogPath}`);
+      }
+      
+      const idea = await callLLM(
+        ideaStage.systemPrompt,
+        context,
+        ideaStage.modelConfig,
+        {
+          debug: this.config.debug,
+          logPath: ideaLogPath
+        }
+      );
+      
+      // Store the idea in the clip's prompt field
+      updatedClip.prompt = idea;
+      
+      // Phase 2A: Generate MIDI from the idea (with retries)
+      const midiStage = this.config.stages[1];
+      if (!midiStage) {
+        throw new Error("Missing MIDI generation stage in pipeline configuration");
+      }
+      
+      // Prepare MIDI debug path
+      let midiLogPath;
+      if (this.config.debug) {
+        midiLogPath = join(
+          this.config.outputDir, 
+          project.id, 
+          group.id, 
+          track.id, 
+          `${clip.id}_midi_stage.log`
+        );
+      }
+      
+      const contextWithIdea = `${context}\n\nMusical idea: ${idea}\n\nGenerate a MIDI file for this idea.`;
+      
+      // Try MIDI generation with retries
+      let midiHex = "";
+      let midiBytes = new Uint8Array();
+      let validationPassed = false;
+      let validationReport = "";
+      let generationAttempt = 0;
+      
+      while (!validationPassed && generationAttempt < maxRetries) {
+        generationAttempt++;
+        console.log(`MIDI generation attempt ${generationAttempt}/${maxRetries}`);
+        
+        // If this is a retry, add specific guidance based on previous validation
+        let retryPrompt = contextWithIdea;
+        if (generationAttempt > 1 && validationReport) {
+          retryPrompt = `${contextWithIdea}\n\nPrevious attempt had the following issues:\n${validationReport}\n\nPlease fix these issues in your new MIDI generation.`;
+        }
+        
+        // Generate MIDI
+        const midiHexResponse = await callLLM(
+          midiStage.systemPrompt,
+          retryPrompt,
+          midiStage.modelConfig,
+          {
+            debug: this.config.debug,
+            logPath: midiLogPath ? `${midiLogPath}.attempt${generationAttempt}` : undefined
+          }
+        );
+        
+        // Extract hex data from the response
+        midiHex = this.extractMidiHex(midiHexResponse);
+        updatedClip.midiData = midiHex;
+        
+        // Debug log the MIDI hex data
+        const debugPath = join(this.config.outputDir, project.id, group.id, track.id, `${clip.id}_hex_log.attempt${generationAttempt}.txt`);
+        await this.saveMidiDebugInfo(midiHexResponse, midiHex, debugPath);
+        
+        // Basic structural validation
+        if (!midiHex.toUpperCase().startsWith("4D 54 68 64")) {
+          console.error("ERROR: Invalid MIDI data - missing MThd header");
+          continue; // Skip to next attempt
+        }
+        
+        // Check for MTrk track header
+        if (!midiHex.toUpperCase().includes("4D 54 72 6B")) {
+          console.error("ERROR: Invalid MIDI data - missing MTrk track header");
+          continue; // Skip to next attempt
+        }
+        
+        // Convert hex to binary
+        midiBytes = hexToBytes(midiHex);
+        updatedClip.rawMidiBytes = midiBytes;
+        
+        // Additional validation
+        if (midiBytes.length < 14) {
+          console.error(`ERROR: MIDI data too short (${midiBytes.length} bytes)`);
+          continue; // Skip to next attempt
+        }
+        
+        // Perform LLM validation
+        try {
+          console.log("Validating MIDI data with LLM...");
+          const validationPath = join(
+            this.config.outputDir, 
+            project.id, 
+            group.id, 
+            track.id, 
+            `${clip.id}_validation.attempt${generationAttempt}.txt`
+          );
+          
+          validationReport = await validateMidiHex(midiHex, validationPath);
+          const hasCriticalIssues = this.checkForCriticalIssues(validationReport);
+          
+          if (hasCriticalIssues) {
+            console.warn(`⚠️ Attempt ${generationAttempt}: LLM validation detected issues`);
+            if (generationAttempt < maxRetries) {
+              console.log("Trying again with feedback from validation...");
+            }
+          } else {
+            console.log(`✅ Attempt ${generationAttempt}: LLM validation passed`);
+            validationPassed = true;
+          }
+        } catch (error) {
+          console.error(`Error during LLM validation (attempt ${generationAttempt}):`, error);
+          // Continue to next attempt on validation error
+        }
+      }
+      
+      // Phase 2B: Save the MIDI file if validation passed
+      console.log(`Generated clip: ${clip.name}`);
+      
+      if (validationPassed) {
+        const filename = `${clip.id}.mid`;
+        const outputPath = join(this.config.outputDir, project.id, group.id, track.id, filename);
+        await saveMidiFile(midiBytes, outputPath);
+        console.log(`✅ MIDI file saved to: ${outputPath}`);
+        console.log(`To play the generated MIDI file: bun run play ${outputPath}`);
+      } else {
+        console.error(`❌ MIDI validation failed after ${maxRetries} attempts - valid file not saved`);
+        // Save the best attempt with a .invalid extension for debugging
+        const invalidFilename = `${clip.id}.best-attempt.invalid.mid`;
+        const invalidPath = join(this.config.outputDir, project.id, group.id, track.id, invalidFilename);
+        await saveMidiFile(midiBytes, invalidPath);
+        console.log(`Best attempt saved to: ${invalidPath} for debugging`);
+      }
+      
+      return updatedClip;
+    } catch (error) {
+      console.error(`Error generating clip ${clip.name}:`, error);
+      throw error;
+    } finally {
+      this.activeRequests--;
+    }
   }
 }

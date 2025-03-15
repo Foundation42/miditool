@@ -11,6 +11,9 @@ MIDITool is an AI-powered music generation pipeline that creates MIDI files usin
 - Support for multiple LLM providers (Mistral, Anthropic, OpenAI, etc.)
 - Advanced LLM-based MIDI validation and analysis
 - Automatic MIDI repair tools for track lengths and end-of-track markers
+- Two-phase generation with validation feedback and retries
+- Simple single-track MIDI generation for improved reliability
+- Mandatory MIDI validation with automatic retry
 - Debug logging for LLM inputs and outputs
 - Configurable for different musical styles and contexts
 
@@ -55,6 +58,7 @@ bun run generate-test-melody    # Create a test melody with clear notes
 bun run create-example          # Create an example project structure
 bun run generate example-project # Generate MIDI for a project
 bun run simple-test             # Run a simple single-clip generation test
+bun run two-phase-test          # Test two-phase generation with validation
 
 # MIDI tools
 bun run play <path-to-midi-file>     # Play a MIDI file

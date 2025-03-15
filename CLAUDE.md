@@ -57,12 +57,15 @@
 - Fix a MIDI file: `bun run fix-midi <file.mid> [output-path]`
 - Fix track lengths: `bun run midi-track-fixer <file.mid> [output-path]`
 - Play a MIDI file: `bun run play <file.mid>`
+- Try two-phase generation: `bun run two-phase-test`
 
 ## Current Progress
 - Core pipeline is working for single clip generation
 - MIDI playback now fixed with proper soundfont configuration
 - Support for multiple LLM providers with Mistral as default
 - Advanced MIDI validation and analysis tools in place
-- LLM-based MIDI validation and track length fixing
+- LLM-based MIDI validation with fail-safe file handling
+- Simplified single-track Format 0 MIDI generation
+- Two-phase generation with validation feedback and retries
 - Debug logging for LLM inputs/outputs
 - Next steps in TODO.md file
