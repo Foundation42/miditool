@@ -393,7 +393,21 @@ follows the standard MIDI file format. Only include the hex bytes in your respon
       
       // Try different MIDI players in order of preference
       const players = [
-        { cmd: "timidity", args: [filePath] },
+        // FluidSynth with explicit soundfont and parameters
+        { 
+          cmd: "fluidsynth", 
+          args: [
+            "-a", "alsa", 
+            "-m", "alsa_seq", 
+            "-i", 
+            "-g", "3.0", 
+            "/usr/share/soundfonts/FluidR3_GM.sf2", 
+            filePath
+          ] 
+        },
+        // TiMidity with maximum amplitude
+        { cmd: "timidity", args: ["-A100", filePath] },
+        // Fallback options
         { cmd: "fluidsynth", args: ["-i", filePath] },
         { cmd: "pmidi", args: ["-p", "14:0", filePath] },
         { cmd: "aplaymidi", args: [filePath] }

@@ -31,27 +31,33 @@ Your task is to generate a MIDI file based on the provided musical idea and cont
 IMPORTANT: You must provide a complete, valid MIDI file in hex format. Format your response as a continuous 
 string of hexadecimal bytes separated by spaces. The file must:
 
-1. Start with the standard MIDI header "4D 54 68 64" (MThd)
-2. Include all required MIDI chunks (header chunk and at least one track chunk)
-3. End with an End of Track meta event (FF 2F 00)
-4. Set the instrument to PIANO (program change event: C0 00) at the beginning of each track
-5. Include note-on (9n) and note-off (8n) events with high velocities (at least 70-100)
-6. Use the appropriate tempo, time signature, and key signature
+1. Use Format 0 (single track) or Format 1 (multiple tracks) MIDI file
+2. Start with the standard MIDI header "4D 54 68 64" (MThd)
+3. Include all required MIDI chunks (header chunk and track chunks)
+4. End each track with an End of Track meta event (FF 2F 00)
+5. Set the instrument to PIANO (program change event: C0 00) at the beginning of each track
+6. Include note-on (9n) and note-off (8n) events with VERY HIGH velocities (at least 90-127)
+7. Set tempo to 120 BPM using meta event (FF 51 03 07 A1 20)
+8. Use time signature 4/4 (meta event FF 58 04 04 02 18 08)
 
-For a valid MIDI file with a piano track playing a C major chord, you would generate:
+For a valid MIDI file with a piano track playing a C major chord at fortissimo, follow this exact template:
 
-4D 54 68 64 00 00 00 06 00 01 00 01 00 60 4D 54 72 6B 00 00 00 3B 00 FF 58 04 
-04 02 18 08 00 FF 51 03 07 A1 20 00 C0 00 00 90 3C 64 00 90 40 64 00 90 43 64 
+4D 54 68 64 00 00 00 06 00 00 00 01 00 60 4D 54 72 6B 00 00 00 3B 00 FF 58 04 
+04 02 18 08 00 FF 51 03 07 A1 20 00 C0 00 00 90 3C 7F 00 90 40 7F 00 90 43 7F 
 83 60 80 3C 00 00 80 40 00 00 80 43 00 00 FF 2F 00
 
 Key elements to include:
-- Track header: 4D 54 72 6B (MTrk)
+- Format 0 MIDI file: 4D 54 68 64 00 00 00 06 00 00 00 01 00 60
+- Track header: 4D 54 72 6B
+- Time signature 4/4: FF 58 04 04 02 18 08
+- Tempo 120 BPM: FF 51 03 07 A1 20
 - Program change to piano: C0 00
-- Note-on with high velocity: 90 [note] [velocity]  
+- Note-on with maximum velocity (127 = 7F): 90 [note] 7F
 - Note-off: 80 [note] 00
+- End of track: FF 2F 00
 
-Do not include any explanations, markdown code blocks, or any non-hex text in your response - 
-ONLY provide the hex bytes of the MIDI file.`,
+CRITICAL: Use maximum velocity (7F) for all notes to ensure they can be heard clearly.
+Do not include any text, explanations, or code blocks - ONLY the hex bytes of the MIDI file.`,
     modelConfig: DEFAULT_LLM_CONFIG
   }
 ];
