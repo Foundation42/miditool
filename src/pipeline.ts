@@ -34,15 +34,24 @@ string of hexadecimal bytes separated by spaces. The file must:
 1. Start with the standard MIDI header "4D 54 68 64" (MThd)
 2. Include all required MIDI chunks (header chunk and at least one track chunk)
 3. End with an End of Track meta event (FF 2F 00)
-4. Set the correct instrument using Program Change events
-5. Include note-on and note-off events with appropriate velocities
+4. Set the instrument to PIANO (program change event: C0 00) at the beginning of each track
+5. Include note-on (9n) and note-off (8n) events with high velocities (at least 70-100)
 6. Use the appropriate tempo, time signature, and key signature
 
-Format your response like this:
-4D 54 68 64 00 00 00 06 00 01 00 01 00 60 4D 54 72 6B 00 00 00 14 00 90 3C 64 ...
+For a valid MIDI file with a piano track playing a C major chord, you would generate:
 
-The MIDI file should follow the General MIDI standard and be properly formatted. Do not include any explanations,
-markdown code blocks, or any non-hex text in your response - ONLY provide the hex bytes of the MIDI file.`,
+4D 54 68 64 00 00 00 06 00 01 00 01 00 60 4D 54 72 6B 00 00 00 3B 00 FF 58 04 
+04 02 18 08 00 FF 51 03 07 A1 20 00 C0 00 00 90 3C 64 00 90 40 64 00 90 43 64 
+83 60 80 3C 00 00 80 40 00 00 80 43 00 00 FF 2F 00
+
+Key elements to include:
+- Track header: 4D 54 72 6B (MTrk)
+- Program change to piano: C0 00
+- Note-on with high velocity: 90 [note] [velocity]  
+- Note-off: 80 [note] 00
+
+Do not include any explanations, markdown code blocks, or any non-hex text in your response - 
+ONLY provide the hex bytes of the MIDI file.`,
     modelConfig: DEFAULT_LLM_CONFIG
   }
 ];
@@ -145,6 +154,8 @@ export class MusicGenerationPipeline {
       await saveMidiFile(midiBytes, outputPath);
       
       console.log(`Generated clip: ${clip.name}`);
+      console.log(`MIDI file saved to: ${outputPath}`);
+      console.log(`To play the generated MIDI file: bun run play ${outputPath}`);
       return updatedClip;
     } catch (error) {
       console.error(`Error generating clip ${clip.name}:`, error);
