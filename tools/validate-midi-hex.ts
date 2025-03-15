@@ -61,7 +61,7 @@ ${midiHex}
     const response = await generate(
       QUICK_VALIDATION_SYSTEM_PROMPT,
       userPrompt,
-      { provider: "mistral", model: "mistral-large-latest" },
+      { provider: "openai", model: "gpt-4o" },
       { temperature: 0.1 }
     );
     
@@ -138,7 +138,7 @@ Provide specific recommendations for fixing any problems.`;
     const response = await generate(
       DETAILED_VALIDATION_SYSTEM_PROMPT,
       userPrompt,
-      { provider: "mistral", model: "mistral-large-latest" },
+      { provider: "openai", model: "gpt-4o" },
       { temperature: 0.2 }
     );
     

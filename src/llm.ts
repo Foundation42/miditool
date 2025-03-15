@@ -9,13 +9,13 @@ import { config as loadEnv } from "dotenv";
 loadEnv();
 
 // Get provider and model from environment or use defaults
-const envProvider = process.env.LLM_PROVIDER || "anthropic";
-const envModel = process.env.LLM_MODEL || "claude-3-7-sonnet-20250219";
+const envProvider = process.env.LLM_PROVIDER || "openai";
+const envModel = process.env.LLM_MODEL || "gpt-4o";
 
 // Default LLM providers/models mapping
 const PROVIDER_DEFAULT_MODELS: Record<string, string> = {
   "anthropic": "claude-3-7-sonnet-20250219",
-  "openai": "gpt-4-turbo",
+  "openai": "gpt-4o",
   "mistral": "mistral-large-latest",
   "gemini": "gemini-1.5-pro-latest",
   "ollama": "llama3",

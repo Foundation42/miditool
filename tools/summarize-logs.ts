@@ -55,7 +55,7 @@ Create a concise summary that highlights the most important information.`;
     const response = await generate(
       SUMMARIZE_SYSTEM_PROMPT,
       userPrompt,
-      { provider: "mistral", model: "mistral-large-latest" },
+      { provider: "openai", model: "gpt-4o" },
       { temperature: 0.3 }
     );
     
