@@ -28,6 +28,7 @@
 - LLM call format: `generate(systemPrompt, userPrompt, modelConfig, options)`
 - Supports multiple providers: OpenAI, Anthropic, Gemini, Vertex, Mistral, Ollama
 - Configure with `LLMConfig`: `{ provider: "anthropic", model: "claude-3-7-sonnet-20250219" }`
+- Default provider now set to Mistral for cost efficiency
 
 ## Environment Variables
 - ANTHROPIC_API_KEY: API key for Anthropic (Claude) models
@@ -42,5 +43,22 @@
 - MAX_CONCURRENT_REQUESTS: Limit for concurrent LLM calls
 
 ## Testing Different Providers
-- Test with Mistral: `bun run test-mistral`
+- Test with Mistral: `bun run test-mistral` or `bun run test-mistral-cli`
+- Test with OpenAI: `bun run test-openai`
+- Run simple one-clip test: `bun run simple-test`
+- List all providers: `bun run list-providers`
 - Switch providers with environment variables: `LLM_PROVIDER=mistral LLM_MODEL=mistral-large-latest bun run test-llm`
+
+## MIDI Tools
+- Generate a known-good MIDI file: `bun run generate-good-midi`
+- Generate a test melody: `bun run generate-test-melody`
+- Analyze a MIDI file: `bun run analyze-midi <file.mid>`
+- Fix a MIDI file: `bun run fix-midi <file.mid>`
+- Play a MIDI file: `bun run play <file.mid>`
+
+## Current Progress
+- Core pipeline is working for single clip generation
+- MIDI playback now fixed with proper soundfont configuration
+- Support for multiple LLM providers with Mistral as default
+- MIDI validation and analysis tools in place
+- Next steps in TODO.md file

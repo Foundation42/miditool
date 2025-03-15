@@ -6,15 +6,17 @@ MIDITool is an AI-powered music generation pipeline that creates MIDI files usin
 
 - Multi-level context hierarchy (Project > Group > Track > Clip)
 - AI-driven music generation using various LLM providers
-- MIDI file generation and processing
+- MIDI file generation and processing with automatic playback
 - Command-line interface for easy interaction
-- Support for multiple LLM providers (Anthropic, OpenAI, etc.)
+- Support for multiple LLM providers (Mistral, Anthropic, OpenAI, etc.)
+- MIDI validation, analysis, and repair tools
+- Configurable for different musical styles and contexts
 
 ## Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/miditool.git
+git clone https://github.com/Foundation42/miditool.git
 cd miditool
 
 # Install dependencies
@@ -23,6 +25,9 @@ bun install
 # Copy environment template and fill in your API keys
 cp .env.example .env
 # Edit .env with your API keys
+
+# Set up MIDI playback (on Linux)
+bun run setup-timidity
 ```
 
 ## Usage
@@ -36,14 +41,23 @@ bun start help
 # Test LLM connection
 bun run test-llm
 
-# Generate a test MIDI file to verify MIDI processing
-bun run test-midi
+# Test with specific LLM provider
+bun run test-mistral-cli  # Test Mistral
+bun run test-openai       # Test OpenAI
 
-# Create an example project
-bun run create-example
+# Generate known-good MIDI files
+bun run generate-good-midi      # Create a standards-compliant MIDI file
+bun run generate-test-melody    # Create a test melody with clear notes
 
-# Generate MIDI for a project
-bun run generate example-project
+# Create and generate projects
+bun run create-example          # Create an example project structure
+bun run generate example-project # Generate MIDI for a project
+bun run simple-test             # Run a simple single-clip generation test
+
+# MIDI tools
+bun run play <path-to-midi-file>     # Play a MIDI file
+bun run analyze-midi <midi-file>     # Analyze a MIDI file
+bun run fix-midi <midi-file>         # Repair a problematic MIDI file
 ```
 
 ### Using as a Library
@@ -85,8 +99,19 @@ await pipeline.generateClip(project, group, track, clip);
 
 ## Environment Variables
 
+### LLM API Keys
 - `ANTHROPIC_API_KEY`: API key for Anthropic (Claude)
 - `OPENAI_API_KEY`: API key for OpenAI
+- `MISTRAL_API_KEY`: API key for Mistral
+- `GOOGLE_API_KEY`: API key for Gemini/Vertex AI
+- `DEEPSEEK_API_KEY`: API key for DeepSeek
+- `OLLAMA_ENDPOINT`: Endpoint for Ollama (local LLMs)
+
+### LLM Configuration
+- `LLM_PROVIDER`: Default LLM provider (anthropic, openai, mistral, etc.)
+- `LLM_MODEL`: Specific model to use with the provider
+
+### Pipeline Settings
 - `OUTPUT_DIR`: Directory for output files (default: ./output)
 - `MAX_CONCURRENT_REQUESTS`: Maximum number of concurrent LLM requests (default: 2)
 
@@ -101,7 +126,34 @@ bun run format
 
 # Build for production
 bun run build
+
+# List all supported LLM providers
+bun run list-providers
 ```
+
+## MIDI Playback
+
+For MIDI playback, the tool requires one of the following players:
+
+- **FluidSynth** (recommended): `sudo pacman -S fluidsynth soundfont-fluid` (Arch) or `sudo apt install fluidsynth fluid-soundfont-gm` (Ubuntu)
+- **TiMidity++**: `sudo pacman -S timidity++` (Arch) or `sudo apt install timidity` (Ubuntu) 
+
+Run `bun run setup-timidity` to configure TiMidity with the correct soundfonts.
+
+## Project Structure
+
+- `src/`: Source code
+  - `types.ts`: Core type definitions
+  - `llm.ts`: LLM interface wrappers
+  - `midi.ts`: MIDI utilities
+  - `pipeline.ts`: Core pipeline implementation
+  - `cli.ts`: Command-line interface
+- `tests/`: Test scripts
+- `tools/`: Utility tools
+  - `midi-analyzer.ts`: Tool to validate MIDI files
+  - `midi-fixer.ts`: Tool to repair MIDI files
+  - `setup-timidity.sh`: Script to configure TiMidity
+- `output/`: Generated MIDI files
 
 ## License
 
