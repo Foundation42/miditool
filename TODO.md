@@ -14,6 +14,8 @@
 - [x] Add MIDI track fixing to repair common MIDI issues
 - [x] Implement simpler single-track Format 0 MIDI generation for reliability
 - [x] Create two-phase generation with validation and feedback retries
+- [x] Implement two-step validation to reduce token usage and latency
+- [x] Add log file summarization for easier troubleshooting
 - [ ] Support MIDI merging/splitting for complex multi-instrument compositions
 - [ ] Create a simple MIDI player component for web playback
 - [ ] Add support for MIDI effects (quantization, humanization, etc.)

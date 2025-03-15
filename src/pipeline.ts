@@ -10,7 +10,7 @@ import type {
 } from "./types";
 import { callLLM, DEFAULT_LLM_CONFIG } from "./llm";
 import { hexToBytes, saveMidiFile } from "./midi";
-import { validateMidiHex } from "../tools/validate-midi-hex";
+import { validateMidiHex, quickValidateMidiHex } from "../tools/validate-midi-hex";
 
 /**
  * Default stages for the music generation pipeline
@@ -243,22 +243,49 @@ export class MusicGenerationPipeline {
         throw new Error("Generated MIDI data is too short to be valid");
       }
       
-      // Always perform LLM validation (not just in debug mode)
+      // Always perform LLM validation (not just in debug mode) - using two-step approach
       let validationPassed = true;
       try {
         console.log("Performing LLM validation of MIDI data...");
         const validationPath = join(this.config.outputDir, project.id, group.id, track.id, `${clip.id}_validation.txt`);
-        const validationReport = await validateMidiHex(midiHex, validationPath);
         
-        // Check for critical issues in the validation report
-        const hasCriticalIssues = this.checkForCriticalIssues(validationReport);
+        // First do quick validation to check if everything is okay
+        const quickResult = await quickValidateMidiHex(midiHex);
         
-        if (hasCriticalIssues) {
-          console.warn("⚠️ WARNING: LLM validation detected potential issues with the MIDI data");
-          console.warn("See the validation report for details: " + validationPath);
-          validationPassed = false;
+        if (quickResult) {
+          console.log("✅ Quick validation passed - no issues detected");
+          
+          // Save a simple report
+          const formattedOutput = `
+================ MIDI VALIDATION REPORT ================
+MIDI data passed quick validation. No issues detected.
+================ END OF REPORT ================
+`;
+          const { writeFile } = await import("node:fs/promises");
+          const { mkdirSync, existsSync } = await import("node:fs");
+          const { dirname } = await import("node:path");
+          
+          const dir = dirname(validationPath);
+          if (!existsSync(dir)) {
+            mkdirSync(dir, { recursive: true });
+          }
+          
+          await writeFile(validationPath, formattedOutput, "utf-8");
         } else {
-          console.log("✅ LLM validation passed with no critical issues detected");
+          // If quick validation fails, get detailed analysis
+          console.log("⚠️ Quick validation failed, getting detailed report...");
+          const validationReport = await validateMidiHex(midiHex, validationPath);
+          
+          // Check for critical issues in the validation report
+          const hasCriticalIssues = this.checkForCriticalIssues(validationReport);
+          
+          if (hasCriticalIssues) {
+            console.warn("⚠️ WARNING: LLM validation detected potential issues with the MIDI data");
+            console.warn("See the validation report for details: " + validationPath);
+            validationPassed = false;
+          } else {
+            console.log("✅ Detailed validation passed despite quick check failure");
+          }
         }
       } catch (error) {
         console.error("Error during LLM validation:", error);
@@ -707,7 +734,7 @@ Length: ${extractedHex.split(/\s+/).length} bytes
           continue; // Skip to next attempt
         }
         
-        // Perform LLM validation
+        // Perform LLM validation using the two-step approach
         try {
           console.log("Validating MIDI data with LLM...");
           const validationPath = join(
@@ -718,17 +745,46 @@ Length: ${extractedHex.split(/\s+/).length} bytes
             `${clip.id}_validation.attempt${generationAttempt}.txt`
           );
           
-          validationReport = await validateMidiHex(midiHex, validationPath);
-          const hasCriticalIssues = this.checkForCriticalIssues(validationReport);
+          // First do quick validation to check if everything is okay
+          const quickResult = await quickValidateMidiHex(midiHex);
           
-          if (hasCriticalIssues) {
-            console.warn(`⚠️ Attempt ${generationAttempt}: LLM validation detected issues`);
-            if (generationAttempt < maxRetries) {
-              console.log("Trying again with feedback from validation...");
-            }
-          } else {
-            console.log(`✅ Attempt ${generationAttempt}: LLM validation passed`);
+          if (quickResult) {
+            console.log(`✅ Attempt ${generationAttempt}: Quick validation passed`);
             validationPassed = true;
+            validationReport = "MIDI data passed quick validation. No issues detected.";
+            
+            // Save a simple report
+            const formattedOutput = `
+================ MIDI VALIDATION REPORT ================
+MIDI data passed quick validation. No issues detected.
+================ END OF REPORT ================
+`;
+            const { writeFile } = await import("node:fs/promises");
+            const { mkdirSync, existsSync } = await import("node:fs");
+            const { dirname } = await import("node:path");
+            
+            const dir = dirname(validationPath);
+            if (!existsSync(dir)) {
+              mkdirSync(dir, { recursive: true });
+            }
+            
+            await writeFile(validationPath, formattedOutput, "utf-8");
+          } else {
+            // If quick validation fails, get detailed analysis
+            console.log(`⚠️ Attempt ${generationAttempt}: Quick validation failed, getting detailed report...`);
+            validationReport = await validateMidiHex(midiHex, validationPath);
+            const hasCriticalIssues = this.checkForCriticalIssues(validationReport);
+            
+            if (hasCriticalIssues) {
+              console.warn(`⚠️ Attempt ${generationAttempt}: LLM validation detected issues`);
+              if (generationAttempt < maxRetries) {
+                console.log("Trying again with feedback from validation...");
+              }
+            } else {
+              // Edge case: quick validation failed but detailed didn't find critical issues
+              console.log(`✅ Attempt ${generationAttempt}: Detailed validation passed despite quick check failure`);
+              validationPassed = true;
+            }
           }
         } catch (error) {
           console.error(`Error during LLM validation (attempt ${generationAttempt}):`, error);

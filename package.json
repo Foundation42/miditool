@@ -25,7 +25,9 @@
     "generate-good-midi": "bun run tools/generate-good-midi.ts",
     "setup-timidity": "./tools/setup-timidity.sh",
     "simple-test": "bun run tests/simple-midi-test.ts",
-    "two-phase-test": "bun run tests/two-phase-test.ts"
+    "two-phase-test": "bun run tests/two-phase-test.ts",
+    "validate-midi": "bun run tools/validate-midi-hex.ts",
+    "summarize-log": "bun run tools/summarize-logs.ts"
   },
   "dependencies": {
     "bunlib": "github:Foundation42/bunlib",
