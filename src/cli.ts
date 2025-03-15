@@ -160,7 +160,7 @@ Examples:
   bun run index.ts generate example-project anthropic claude-3-7-sonnet-20250219
 
 Environment Variables:
-  LLM_PROVIDER                Default LLM provider (default: anthropic)
+  LLM_PROVIDER                Default LLM provider (default: openai)
   LLM_MODEL                   Default model for the provider
   ANTHROPIC_API_KEY           API key for Anthropic (Claude)
   OPENAI_API_KEY              API key for OpenAI
@@ -182,8 +182,8 @@ Available LLM Providers and Default Models:
 
 Provider    | Default Model                  | Environment Variable
 ---------------------------------------------------------------------------
+openai      | gpt-4o                         | OPENAI_API_KEY
 anthropic   | claude-3-7-sonnet-20250219     | ANTHROPIC_API_KEY
-openai      | gpt-4-turbo                    | OPENAI_API_KEY
 mistral     | mistral-large-latest           | MISTRAL_API_KEY
 gemini      | gemini-1.5-pro-latest          | GOOGLE_API_KEY
 deepseek    | deepseek-coder                 | DEEPSEEK_API_KEY
@@ -191,7 +191,7 @@ ollama      | llama3                         | OLLAMA_ENDPOINT
 vertex      | gemini-1.5-pro                 | GOOGLE_API_KEY, GOOGLE_PROJECT_ID
 
 Current configuration:
-- Provider: ${process.env.LLM_PROVIDER || "anthropic"} (set with LLM_PROVIDER)
+- Provider: ${process.env.LLM_PROVIDER || "openai"} (set with LLM_PROVIDER)
 - Model: ${process.env.LLM_MODEL || "(using provider default)"} (set with LLM_MODEL)
 `);
   }
