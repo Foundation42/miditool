@@ -27,8 +27,8 @@
 - Use `bunlib` library for LLM integration: `import { generate } from 'bunlib'`
 - LLM call format: `generate(systemPrompt, userPrompt, modelConfig, options)`
 - Supports multiple providers: OpenAI, Anthropic, Gemini, Vertex, Mistral, Ollama
-- Configure with `LLMConfig`: `{ provider: "anthropic", model: "claude-3-7-sonnet-20250219" }`
-- Default provider now set to Mistral for cost efficiency
+- Configure with `LLMConfig`: `{ provider: "openai", model: "gpt-4o" }`
+- Default provider now set to OpenAI for improved reliability
 
 ## Environment Variables
 - ANTHROPIC_API_KEY: API key for Anthropic (Claude) models
