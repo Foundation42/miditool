@@ -9,7 +9,9 @@ MIDITool is an AI-powered music generation pipeline that creates MIDI files usin
 - MIDI file generation and processing with automatic playback
 - Command-line interface for easy interaction
 - Support for multiple LLM providers (Mistral, Anthropic, OpenAI, etc.)
-- MIDI validation, analysis, and repair tools
+- Advanced LLM-based MIDI validation and analysis
+- Automatic MIDI repair tools for track lengths and end-of-track markers
+- Debug logging for LLM inputs and outputs
 - Configurable for different musical styles and contexts
 
 ## Installation

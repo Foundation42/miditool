@@ -64,10 +64,22 @@ export async function callLLM(
     ...options
   };
   
+  // Extract debug flag
+  const debug = !!options.debug;
+  if (debug) {
+    await logLLMCall('input', { systemPrompt, userPrompt, modelConfig, options }, options.logPath);
+  }
+  
   while (retries < MAX_RETRIES) {
     try {
       console.log(`LLM call to ${modelConfig.provider}/${modelConfig.model}`);
       const response = await generate(systemPrompt, userPrompt, modelConfig, finalOptions);
+      
+      // Log response if debug mode is enabled
+      if (debug) {
+        await logLLMCall('output', { response: response.text }, options.logPath);
+      }
+      
       return response.text;
     } catch (error) {
       lastError = error as Error;
@@ -86,6 +98,53 @@ export async function callLLM(
   
   // If we get here, all retries failed
   throw new Error(`LLM call failed after ${MAX_RETRIES} attempts: ${lastError?.message}`);
+}
+
+/**
+ * Log LLM call inputs or outputs for debugging
+ * 
+ * @param type - 'input' or 'output'
+ * @param data - Data to log
+ * @param logPath - Path to log file (if provided)
+ */
+async function logLLMCall(
+  type: 'input' | 'output',
+  data: Record<string, any>,
+  logPath?: string
+): Promise<void> {
+  try {
+    // Create a formatted log message
+    const timestamp = new Date().toISOString();
+    const logContent = `
+==== ${type.toUpperCase()} [${timestamp}] ====
+${JSON.stringify(data, null, 2)}
+======================================
+`;
+
+    console.log(`Logging LLM ${type} for debugging`);
+    
+    // If a log path is provided, write to that file
+    if (logPath) {
+      const { writeFile, mkdir } = await import("node:fs/promises");
+      const { dirname, resolve } = await import("node:path");
+      const { existsSync } = await import("node:fs");
+      
+      // Ensure directory exists
+      const dir = dirname(logPath);
+      if (!existsSync(dir)) {
+        await mkdir(dir, { recursive: true });
+      }
+      
+      // Append to log file (or create if it doesn't exist)
+      try {
+        await writeFile(logPath, logContent, { flag: 'a' });
+      } catch (error) {
+        console.error(`Error writing to log file ${logPath}:`, error);
+      }
+    }
+  } catch (error) {
+    console.error("Error logging LLM call:", error);
+  }
 }
 
 /**

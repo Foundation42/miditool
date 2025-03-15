@@ -53,12 +53,16 @@
 - Generate a known-good MIDI file: `bun run generate-good-midi`
 - Generate a test melody: `bun run generate-test-melody`
 - Analyze a MIDI file: `bun run analyze-midi <file.mid>`
-- Fix a MIDI file: `bun run fix-midi <file.mid>`
+- Validate a MIDI file with LLM: `bun run validate-midi <file.mid>`
+- Fix a MIDI file: `bun run fix-midi <file.mid> [output-path]`
+- Fix track lengths: `bun run midi-track-fixer <file.mid> [output-path]`
 - Play a MIDI file: `bun run play <file.mid>`
 
 ## Current Progress
 - Core pipeline is working for single clip generation
 - MIDI playback now fixed with proper soundfont configuration
 - Support for multiple LLM providers with Mistral as default
-- MIDI validation and analysis tools in place
+- Advanced MIDI validation and analysis tools in place
+- LLM-based MIDI validation and track length fixing
+- Debug logging for LLM inputs/outputs
 - Next steps in TODO.md file

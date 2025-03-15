@@ -75,4 +75,5 @@ export interface MusicGenerationConfig {
   stages: PipelineStageConfig[];
   outputDir: string;
   maxConcurrentRequests: number;
+  debug?: boolean; // Enable debug mode to log LLM inputs/outputs
 }

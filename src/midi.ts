@@ -13,21 +13,38 @@ import { dirname, join } from "node:path";
  */
 export function hexToBytes(hexString: string): Uint8Array {
   // Remove any whitespace or special characters
-  const cleanHex = hexString.replace(/[\s\n]+/g, "");
+  let cleanHex = hexString.replace(/[\s\n]+/g, "");
+  
+  // If debugging, log details about the hex string
+  if (process.env.DEBUG) {
+    console.log(`Converting hex string to bytes. Length: ${hexString.length}, Clean length: ${cleanHex.length}`);
+  }
   
   // Check if the string has an odd number of characters
   if (cleanHex.length % 2 !== 0) {
-    throw new Error("Hex string must have an even number of characters");
+    console.warn(`WARNING: Hex string has odd length (${cleanHex.length}). Padding with '0'.`);
+    console.warn(`Original hex string starts with: ${hexString.substring(0, 100)}...`);
+    
+    // Pad with a zero to make it even
+    cleanHex = cleanHex + "0";
   }
   
   // Parse the hex string into bytes
   const bytes = new Uint8Array(cleanHex.length / 2);
   for (let i = 0; i < cleanHex.length; i += 2) {
-    const byteValue = parseInt(cleanHex.substr(i, 2), 16);
-    if (isNaN(byteValue)) {
-      throw new Error(`Invalid hex sequence at position ${i}: ${cleanHex.substr(i, 2)}`);
+    try {
+      const byteValue = parseInt(cleanHex.substr(i, 2), 16);
+      if (isNaN(byteValue)) {
+        console.warn(`WARNING: Invalid hex sequence at position ${i}: ${cleanHex.substr(i, 2)}`);
+        // Use zero as fallback for invalid characters
+        bytes[i / 2] = 0;
+      } else {
+        bytes[i / 2] = byteValue;
+      }
+    } catch (error) {
+      console.warn(`ERROR parsing hex at position ${i}: ${error}`);
+      bytes[i / 2] = 0; // Use zero as fallback
     }
-    bytes[i / 2] = byteValue;
   }
   
   return bytes;

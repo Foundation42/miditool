@@ -4,10 +4,12 @@
 import { config as loadEnv } from "dotenv";
 import { MusicGenerationPipeline } from "./pipeline";
 import { testLLMConnection } from "./llm";
-import { createTestMidiFile, saveMidiFile } from "./midi";
+import { createTestMidiFile, saveMidiFile, hexToBytes } from "./midi";
 import { join } from "node:path";
 import { existsSync, mkdirSync } from "node:fs";
 import { writeFile, readFile } from "node:fs/promises";
+import { validateMidiHex } from "../tools/validate-midi-hex";
+import { fixMidiTrackLengths } from "../tools/midi-track-fixer";
 
 // Load environment variables
 loadEnv();
@@ -98,6 +100,24 @@ export class MusicToolCLI {
         await this.playMidi(commandArgs[0]);
         break;
         
+      case "validate-midi":
+        if (commandArgs.length < 1) {
+          console.error("Error: MIDI file path is required");
+          this.showHelp();
+          return;
+        }
+        await this.validateMidi(commandArgs[0]);
+        break;
+        
+      case "fix-midi":
+        if (commandArgs.length < 1) {
+          console.error("Error: MIDI file path is required");
+          this.showHelp();
+          return;
+        }
+        await this.fixMidi(commandArgs[0], commandArgs[1]);
+        break;
+        
       case "list-providers":
         this.listProviders();
         break;
@@ -129,6 +149,8 @@ Commands:
   generate <project> [provider] [model]  Generate MIDI for a project
   list-providers               List available LLM providers and their default models
   play <file>                  Play a MIDI file (requires timidity or fluidsynth)
+  validate-midi <file>         Validate a MIDI file using LLM analysis
+  fix-midi <file> [output]     Fix common MIDI file issues like track lengths
   help                         Show this help message
 
 Examples:
@@ -369,6 +391,87 @@ follows the standard MIDI file format. Only include the hex bytes in your respon
       console.log("✅ MIDI generation complete");
     } catch (error) {
       console.error("❌ Error generating MIDI:", error);
+    }
+  }
+  
+  /**
+   * Fix common issues in a MIDI file
+   * 
+   * @param filePath - Path to the MIDI file
+   * @param outputPath - Optional output path for fixed file
+   */
+  private async fixMidi(filePath: string, outputPath?: string): Promise<void> {
+    console.log(`Fixing MIDI file: ${filePath}`);
+    
+    try {
+      // Check if the file exists
+      if (!existsSync(filePath)) {
+        console.error(`File does not exist: ${filePath}`);
+        return;
+      }
+      
+      // Fix the MIDI file track lengths
+      const fixedPath = await fixMidiTrackLengths(filePath, outputPath);
+      
+      console.log(`✅ Fixed MIDI file saved to: ${fixedPath}`);
+      
+      // Automatically validate the fixed file
+      console.log("\nValidating fixed MIDI file...");
+      await this.validateMidi(fixedPath);
+      
+      // Offer to play the fixed file
+      console.log("\nTo play the fixed MIDI file, run:");
+      console.log(`bun run play ${fixedPath}`);
+      
+    } catch (error) {
+      console.error(`Error fixing MIDI file:`, error);
+    }
+  }
+  
+  /**
+   * Validate a MIDI file using the LLM validator
+   * 
+   * @param filePath - Path to the MIDI file
+   */
+  private async validateMidi(filePath: string): Promise<void> {
+    console.log(`Validating MIDI file: ${filePath}`);
+    
+    try {
+      // Check if the file exists and is a MIDI file
+      if (!existsSync(filePath)) {
+        console.error(`File does not exist: ${filePath}`);
+        return;
+      }
+      
+      if (!filePath.toLowerCase().endsWith('.mid') && !filePath.toLowerCase().endsWith('.midi')) {
+        console.warn(`Warning: File does not have a .mid or .midi extension: ${filePath}`);
+      }
+      
+      // Read the file
+      const fileData = await readFile(filePath);
+      
+      // Convert to hex string
+      const hexString = Array.from(fileData)
+        .map(byte => byte.toString(16).padStart(2, '0'))
+        .join(" ");
+      
+      console.log(`MIDI file size: ${fileData.length} bytes`);
+      console.log("Running LLM validation...");
+      
+      // Output path for the validation report
+      const outputPath = filePath + '.validation.txt';
+      
+      // Validate the MIDI hex data
+      const validationReport = await validateMidiHex(hexString, outputPath);
+      
+      console.log(`\nMIDI Validation Report for ${filePath}:`);
+      console.log("-".repeat(50));
+      console.log(validationReport);
+      console.log("-".repeat(50));
+      console.log(`\nFull validation report saved to: ${outputPath}`);
+      
+    } catch (error) {
+      console.error(`Error validating MIDI file:`, error);
     }
   }
   
