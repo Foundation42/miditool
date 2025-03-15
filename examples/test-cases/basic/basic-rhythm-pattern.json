@@ -1,0 +1,38 @@
+{
+  "name": "Basic Rhythm Pattern",
+  "description": "A simple drum pattern in 4/4",
+  "properties": {
+    "style": "Rock",
+    "tempo": 100,
+    "key": "C Major",
+    "timeSignature": "4/4"
+  },
+  "groups": [
+    {
+      "name": "Rhythm",
+      "properties": {
+        "role": "rhythm",
+        "description": "Basic drum pattern"
+      },
+      "tracks": [
+        {
+          "name": "Drums",
+          "instrument": "Drum Kit",
+          "properties": {
+            "description": "Standard rock beat"
+          },
+          "clips": [
+            {
+              "name": "Basic Beat",
+              "startBar": 0,
+              "lengthBars": 2,
+              "properties": {
+                "description": "Standard rock beat with kick on 1 and 3, snare on 2 and 4, eighth notes on hi-hat"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

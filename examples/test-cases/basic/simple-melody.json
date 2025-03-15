@@ -1,0 +1,38 @@
+{
+  "name": "Simple Melody",
+  "description": "A simple 8-bar melody in C major",
+  "properties": {
+    "style": "Classical",
+    "tempo": 120,
+    "key": "C Major",
+    "timeSignature": "4/4"
+  },
+  "groups": [
+    {
+      "name": "Melody",
+      "properties": {
+        "role": "lead",
+        "description": "Main melodic content"
+      },
+      "tracks": [
+        {
+          "name": "Piano",
+          "instrument": "Grand Piano",
+          "properties": {
+            "description": "Simple piano melody"
+          },
+          "clips": [
+            {
+              "name": "Main Melody",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Simple diatonic melody in C major using quarter and eighth notes"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

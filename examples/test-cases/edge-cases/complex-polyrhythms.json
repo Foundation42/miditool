@@ -1,0 +1,55 @@
+{
+  "name": "Polyrhythms",
+  "description": "Piano piece with complex polyrhythms",
+  "properties": {
+    "style": "Contemporary",
+    "tempo": 100,
+    "key": "C Major",
+    "timeSignature": "4/4"
+  },
+  "groups": [
+    {
+      "name": "Piano",
+      "properties": {
+        "role": "solo",
+        "description": "Solo piano with polyrhythms"
+      },
+      "tracks": [
+        {
+          "name": "Piano Right Hand",
+          "instrument": "Grand Piano",
+          "properties": {
+            "description": "Right hand pattern in 3"
+          },
+          "clips": [
+            {
+              "name": "Right Hand Pattern",
+              "startBar": 0,
+              "lengthBars": 4,
+              "properties": {
+                "description": "Melodic pattern grouped in 3s against the 4/4 time signature"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Piano Left Hand",
+          "instrument": "Grand Piano",
+          "properties": {
+            "description": "Left hand pattern in 4"
+          },
+          "clips": [
+            {
+              "name": "Left Hand Pattern",
+              "startBar": 0,
+              "lengthBars": 4,
+              "properties": {
+                "description": "Bass pattern grouped in 4s, establishing the basic 4/4 meter"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

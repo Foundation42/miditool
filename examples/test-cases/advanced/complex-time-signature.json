@@ -1,0 +1,64 @@
+{
+  "name": "Odd Time Signature",
+  "description": "Piano and percussion piece in 7/8 time",
+  "properties": {
+    "style": "Progressive",
+    "tempo": 130,
+    "key": "B minor",
+    "timeSignature": "7/8"
+  },
+  "groups": [
+    {
+      "name": "Melodic",
+      "properties": {
+        "role": "melodic",
+        "description": "Melodic elements"
+      },
+      "tracks": [
+        {
+          "name": "Piano",
+          "instrument": "Grand Piano",
+          "properties": {
+            "description": "Complex piano part in 7/8"
+          },
+          "clips": [
+            {
+              "name": "Main Theme",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Piano theme in B minor using 7/8 time, grouped as 2+2+3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Percussion",
+      "properties": {
+        "role": "rhythm",
+        "description": "Percussion elements"
+      },
+      "tracks": [
+        {
+          "name": "Percussion",
+          "instrument": "Percussion Kit",
+          "properties": {
+            "description": "Complex percussion pattern"
+          },
+          "clips": [
+            {
+              "name": "7/8 Pattern",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Percussion pattern in 7/8 time that emphasizes the 2+2+3 grouping"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

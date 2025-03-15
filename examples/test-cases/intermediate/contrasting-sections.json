@@ -1,0 +1,46 @@
+{
+  "name": "Verse and Chorus",
+  "description": "A piano piece with contrasting verse and chorus sections",
+  "properties": {
+    "style": "Pop Ballad",
+    "tempo": 75,
+    "key": "A minor",
+    "timeSignature": "4/4"
+  },
+  "groups": [
+    {
+      "name": "Piano",
+      "properties": {
+        "role": "main",
+        "description": "Solo piano"
+      },
+      "tracks": [
+        {
+          "name": "Piano",
+          "instrument": "Grand Piano",
+          "properties": {
+            "description": "Expressive piano performance"
+          },
+          "clips": [
+            {
+              "name": "Verse",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Gentle A minor progression with arpeggiated figures, melancholy feel"
+              }
+            },
+            {
+              "name": "Chorus",
+              "startBar": 8,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Brighter progression with transition to C major, more rhythmic block chords"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

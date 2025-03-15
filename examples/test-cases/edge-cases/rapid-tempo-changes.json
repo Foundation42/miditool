@@ -1,0 +1,62 @@
+{
+  "name": "Tempo Changes",
+  "description": "Piano piece with multiple tempo changes",
+  "properties": {
+    "style": "Contemporary Classical",
+    "tempo": 120,
+    "key": "D Major",
+    "timeSignature": "4/4"
+  },
+  "groups": [
+    {
+      "name": "Piano",
+      "properties": {
+        "role": "solo",
+        "description": "Solo piano with tempo changes"
+      },
+      "tracks": [
+        {
+          "name": "Piano",
+          "instrument": "Grand Piano",
+          "properties": {
+            "description": "Piano part with tempo changes"
+          },
+          "clips": [
+            {
+              "name": "Opening",
+              "startBar": 0,
+              "lengthBars": 4,
+              "properties": {
+                "description": "Starting tempo of 120 BPM, D major melody"
+              }
+            },
+            {
+              "name": "Slower Section",
+              "startBar": 4,
+              "lengthBars": 4,
+              "properties": {
+                "description": "Tempo reduces to 80 BPM, more introspective character"
+              }
+            },
+            {
+              "name": "Accelerando",
+              "startBar": 8,
+              "lengthBars": 4,
+              "properties": {
+                "description": "Gradually accelerating from 80 BPM to 160 BPM over 4 bars"
+              }
+            },
+            {
+              "name": "Finale",
+              "startBar": 12,
+              "lengthBars": 4,
+              "properties": {
+                "description": "Fast conclusion at 160 BPM with virtuosic character"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

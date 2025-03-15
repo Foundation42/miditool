@@ -1,0 +1,64 @@
+{
+  "name": "Basic Multi-Track",
+  "description": "A simple arrangement with bass and melody",
+  "properties": {
+    "style": "Jazz",
+    "tempo": 110,
+    "key": "F Major",
+    "timeSignature": "4/4"
+  },
+  "groups": [
+    {
+      "name": "Melodic Elements",
+      "properties": {
+        "role": "melodic",
+        "description": "Melodic components"
+      },
+      "tracks": [
+        {
+          "name": "Saxophone",
+          "instrument": "Alto Saxophone",
+          "properties": {
+            "description": "Smooth jazz melody line"
+          },
+          "clips": [
+            {
+              "name": "Main Theme",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Smooth jazz melody in F major with some chromatic passing tones"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rhythm Section",
+      "properties": {
+        "role": "rhythm",
+        "description": "Rhythm section instruments"
+      },
+      "tracks": [
+        {
+          "name": "Bass",
+          "instrument": "Acoustic Bass",
+          "properties": {
+            "description": "Walking bass line"
+          },
+          "clips": [
+            {
+              "name": "Bass Line",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Walking bass line in F major that complements the saxophone melody"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

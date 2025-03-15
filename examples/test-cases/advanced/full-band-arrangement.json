@@ -1,0 +1,107 @@
+{
+  "name": "Full Band Arrangement",
+  "description": "Complete arrangement with drums, bass, keys, and guitar",
+  "properties": {
+    "style": "Rock",
+    "tempo": 120,
+    "key": "E minor",
+    "timeSignature": "4/4"
+  },
+  "groups": [
+    {
+      "name": "Rhythm Section",
+      "properties": {
+        "role": "rhythm",
+        "description": "Rhythm section instruments"
+      },
+      "tracks": [
+        {
+          "name": "Drums",
+          "instrument": "Rock Kit",
+          "properties": {
+            "description": "Dynamic rock beat"
+          },
+          "clips": [
+            {
+              "name": "Main Beat",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Energetic rock beat with fills leading into bar 5"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bass",
+          "instrument": "Electric Bass",
+          "properties": {
+            "description": "Driving bass line"
+          },
+          "clips": [
+            {
+              "name": "Bass Line",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Driving eighth-note bass line that locks with the kick drum pattern"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Harmonic Elements",
+      "properties": {
+        "role": "harmonic",
+        "description": "Harmonic elements"
+      },
+      "tracks": [
+        {
+          "name": "Keys",
+          "instrument": "Pad Synth",
+          "properties": {
+            "description": "Atmospheric pad"
+          },
+          "clips": [
+            {
+              "name": "Pad Progression",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Atmospheric pad playing Em - C - G - D chord progression with slow attack"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Lead Elements",
+      "properties": {
+        "role": "lead",
+        "description": "Lead elements"
+      },
+      "tracks": [
+        {
+          "name": "Electric Guitar",
+          "instrument": "Distorted Guitar",
+          "properties": {
+            "description": "Lead guitar riff"
+          },
+          "clips": [
+            {
+              "name": "Main Riff",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Powerful E minor riff that stands out above the rest of the arrangement"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

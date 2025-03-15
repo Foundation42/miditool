@@ -1,0 +1,38 @@
+{
+  "name": "Simple Chord Progression",
+  "description": "A basic 4-bar chord progression in G minor",
+  "properties": {
+    "style": "Pop",
+    "tempo": 90,
+    "key": "G minor",
+    "timeSignature": "4/4"
+  },
+  "groups": [
+    {
+      "name": "Harmony",
+      "properties": {
+        "role": "harmonic",
+        "description": "Chord progression"
+      },
+      "tracks": [
+        {
+          "name": "Keys",
+          "instrument": "Electric Piano",
+          "properties": {
+            "description": "Block chord progression"
+          },
+          "clips": [
+            {
+              "name": "Verse Chords",
+              "startBar": 0,
+              "lengthBars": 4,
+              "properties": {
+                "description": "Simple chord progression in G minor: Gm - Eb - Bb - F"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

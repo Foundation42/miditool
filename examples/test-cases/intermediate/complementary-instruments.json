@@ -1,0 +1,55 @@
+{
+  "name": "Guitar Duet",
+  "description": "Two guitar parts that complement each other",
+  "properties": {
+    "style": "Folk",
+    "tempo": 85,
+    "key": "D Major",
+    "timeSignature": "4/4"
+  },
+  "groups": [
+    {
+      "name": "Guitars",
+      "properties": {
+        "role": "main",
+        "description": "Guitar duet"
+      },
+      "tracks": [
+        {
+          "name": "Guitar 1",
+          "instrument": "Acoustic Guitar",
+          "properties": {
+            "description": "Fingerpicking pattern"
+          },
+          "clips": [
+            {
+              "name": "Pattern",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "D major fingerpicking pattern using arpeggios"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guitar 2",
+          "instrument": "Acoustic Guitar",
+          "properties": {
+            "description": "Melodic fills"
+          },
+          "clips": [
+            {
+              "name": "Fills",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Melodic D major fills that complement the fingerpicking pattern without clashing"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

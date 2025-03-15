@@ -1,0 +1,38 @@
+{
+  "name": "Extreme Registers",
+  "description": "Piano piece using extreme high and low registers",
+  "properties": {
+    "style": "Contemporary Classical",
+    "tempo": 60,
+    "key": "Atonal",
+    "timeSignature": "4/4"
+  },
+  "groups": [
+    {
+      "name": "Piano",
+      "properties": {
+        "role": "solo",
+        "description": "Solo piano using extreme registers"
+      },
+      "tracks": [
+        {
+          "name": "Piano",
+          "instrument": "Grand Piano",
+          "properties": {
+            "description": "Piano part using full range"
+          },
+          "clips": [
+            {
+              "name": "Extreme Range",
+              "startBar": 0,
+              "lengthBars": 8,
+              "properties": {
+                "description": "Piano part that uses both extremely high (C7-C8) and extremely low (A0-C1) registers, often simultaneously"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
