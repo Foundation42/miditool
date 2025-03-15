@@ -1,0 +1,34 @@
+{
+  "name": "miditool",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "bun run index.ts",
+    "build": "bun build index.ts --outdir ./dist",
+    "typecheck": "bun tsc --noEmit",
+    "test": "bun test",
+    "format": "bunx prettier --write \"src/**/*.ts\"",
+    "test-llm": "bun run index.ts test-llm",
+    "test-midi": "bun run index.ts test-midi",
+    "create-example": "bun run index.ts create-example",
+    "generate": "bun run index.ts generate example-project",
+    "test-mistral": "bun run test-mistral.ts",
+    "list-providers": "bun run index.ts list-providers",
+    "test-openai": "bun run index.ts test-llm openai gpt-4-turbo",
+    "test-mistral-cli": "bun run index.ts test-llm mistral mistral-large-latest"
+  },
+  "dependencies": {
+    "bunlib": "github:Foundation42/bunlib",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/uuid": "^9.0.2",
+    "prettier": "^3.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
