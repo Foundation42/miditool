@@ -3,11 +3,19 @@
 ## Next Development Steps
 
 ### Core Functionality
+- [ ] Implement enhanced multi-stage pipeline based on the [Enhancement Plan](docs/enhancement-plan.md)
 - [ ] Add support for multi-track MIDI generation (e.g., drums, bass, melody in one file)
 - [ ] Implement a caching system for LLM responses to avoid redundant calls
 - [ ] Add support for generating an entire project at once (all clips in all tracks)
 - [ ] Create a JSON export/import system for projects to support project sharing
 - [ ] Implement proper error recovery for failed generations
+
+### Enhanced Pipeline Features
+- [ ] Create configurable pipeline architecture with stage registry
+- [ ] Implement structured musical representation formats
+- [ ] Develop enhanced context building with musical relationships
+- [ ] Add role-specific pipeline configurations
+- [ ] Create advanced validation with musical theory awareness
 
 ### MIDI Engineering
 - [x] Add MIDI validation before saving to ensure complete, valid files

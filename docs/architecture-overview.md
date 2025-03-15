@@ -101,3 +101,13 @@ MIDITool is an AI-powered music generation pipeline that creates MIDI files usin
 - Advanced validation tools with LLM analysis
 - Multiple LLM provider support with OpenAI as default
 - Debug logging system for troubleshooting
+
+## Future Enhancements
+
+We are planning major enhancements to the pipeline architecture to improve musical richness and contextual awareness while maintaining system reliability. See the [Enhancement Plan](enhancement-plan.md) for details on:
+
+- Configurable multi-stage pipeline architecture
+- Structured musical representation
+- Enhanced context building with musical relationships
+- Role-specific pipeline configurations
+- Improved validation with musical theory awareness
