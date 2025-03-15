@@ -1,5 +1,12 @@
 # CLAUDE.md - Project Guidelines for Miditool
 
+## Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+- **[Architecture Overview](docs/architecture-overview.md)**: System design and components
+- **[User Guide](docs/user-guide.md)**: Installation and usage instructions
+- **[Developer Guide](docs/developer-guide.md)**: Development practices and extension
+
 ## Build & Dev Commands
 - Install dependencies: `bun install`
 - Run application: `bun run index.ts`
@@ -63,7 +70,7 @@
 ## Current Progress
 - Core pipeline is working for single clip generation
 - MIDI playback now fixed with proper soundfont configuration
-- Support for multiple LLM providers with Mistral as default
+- Support for multiple LLM providers with OpenAI as default
 - Advanced MIDI validation and analysis tools in place
 - LLM-based MIDI validation with fail-safe file handling
 - Two-step validation to reduce token usage and latency
@@ -72,3 +79,23 @@
 - Log summarization with concise human-friendly output
 - Debug logging for LLM inputs/outputs
 - Next steps in TODO.md file
+- Comprehensive documentation in docs/ directory
+
+## Development Workflow
+
+### Before Starting Work
+- Read the documentation in the docs/ directory to understand the system
+- Review the TODO.md file to see planned improvements
+- Run tests to verify your environment is set up correctly: `bun run simple-test`
+
+### During Development
+- Use the two-phase generation approach for better results
+- Enable debug mode for detailed logging when troubleshooting
+- Validate generated MIDI files using the validation tools
+- Follow the TypeScript code style guidelines
+
+### Before Committing
+- Run typechecking: `bun run typecheck`
+- Format code: `bun run format`
+- Test your changes with different LLM providers if applicable
+- Update documentation if adding new features
