@@ -170,13 +170,39 @@ ${analysis}
   }
 }
 
+/**
+ * Read a MIDI file and convert to hex string representation
+ * 
+ * @param filePath - Path to the MIDI file
+ * @returns Hex string representation of the MIDI file
+ */
+async function readMidiFileAsHex(filePath: string): Promise<string> {
+  try {
+    const { readFile } = await import('node:fs/promises');
+    const data = await readFile(filePath);
+    
+    // Convert binary to hex string
+    let hexString = '';
+    for (let i = 0; i < data.length; i++) {
+      const hex = data[i].toString(16).padStart(2, '0').toUpperCase();
+      hexString += (i > 0 ? ' ' : '') + hex;
+    }
+    
+    console.log(`Read MIDI file: ${filePath} (${data.length} bytes)`);
+    return hexString;
+  } catch (error) {
+    console.error(`Error reading MIDI file ${filePath}:`, error);
+    throw error;
+  }
+}
+
 // Run as standalone script if called directly
 if (require.main === module) {
   // Check for help flag first
   if (process.argv.includes('--help') || process.argv.includes('-h')) {
     console.log('MIDI Validation Tool');
     console.log('-------------------');
-    console.log('Usage: bun run validate-midi-hex.ts "4D 54 68 64..." [options]');
+    console.log('Usage: bun run validate-midi-hex.ts <midi-file-or-hex-string> [options]');
     console.log('');
     console.log('Options:');
     console.log('  --help, -h: Show this help message');
@@ -184,16 +210,16 @@ if (require.main === module) {
     console.log('  --output=<path>: Save validation report to the specified path');
     console.log('');
     console.log('Examples:');
-    console.log('  bun run validate-midi-hex.ts "4D 54 68 64..."');
-    console.log('  bun run validate-midi-hex.ts "4D 54 68 64..." --quick');
+    console.log('  bun run validate-midi-hex.ts path/to/file.mid');
+    console.log('  bun run validate-midi-hex.ts path/to/file.mid --quick');
     console.log('  bun run validate-midi-hex.ts "4D 54 68 64..." --output=report.txt');
     process.exit(0);
   }
   
   // Check if a file path is provided
   if (process.argv.length < 3) {
-    console.error('Please provide a MIDI hex string or file with hex data');
-    console.error('Usage: bun run validate-midi-hex.ts "4D 54 68 64..."');
+    console.error('Please provide a MIDI file path or hex string');
+    console.error('Usage: bun run validate-midi-hex.ts <midi-file-or-hex-string>');
     console.error('Options:');
     console.error('  --quick: Only perform quick validation (faster)');
     console.error('  --output=<path>: Save validation report to the specified path');
@@ -201,32 +227,38 @@ if (require.main === module) {
     process.exit(1);
   }
   
-  // Get the hex data from command line arguments
-  const midiHex = process.argv[2];
+  // Get the input from command line arguments
+  const input = process.argv[2];
   
   // Parse options
   const options = process.argv.slice(3);
   const quickMode = options.includes('--quick');
   const outputPath = options.find(opt => opt.startsWith('--output='))?.split('=')[1];
   
-  // Run validation
-  if (quickMode) {
-    quickValidateMidiHex(midiHex)
-      .then(isValid => {
+  // Determine if input is a file path or hex string
+  const isMidiFile = input.toLowerCase().endsWith('.mid') || 
+                     input.toLowerCase().endsWith('.midi') || 
+                     (input.includes('/') && !input.includes(' '));
+  
+  // Main execution flow
+  (async () => {
+    try {
+      // Get the hex data - either from file or directly from input
+      const midiHex = isMidiFile ? await readMidiFileAsHex(input) : input;
+      
+      // Run validation
+      if (quickMode) {
+        const isValid = await quickValidateMidiHex(midiHex);
         console.log("\nQuick MIDI Validation Result:");
         console.log(isValid ? "✅ VALID" : "❌ INVALID");
-      })
-      .catch(error => {
-        console.error('Error running quick MIDI validation:', error);
-      });
-  } else {
-    validateMidiHex(midiHex, outputPath)
-      .then(analysis => {
+      } else {
+        const analysis = await validateMidiHex(midiHex, outputPath);
         console.log("\nMIDI Validation Analysis:");
         console.log(analysis);
-      })
-      .catch(error => {
-        console.error('Error running MIDI validation:', error);
-      });
-  }
+      }
+    } catch (error) {
+      console.error('Error processing input:', error);
+      process.exit(1);
+    }
+  })();
 }
