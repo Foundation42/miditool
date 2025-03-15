@@ -172,6 +172,24 @@ ${analysis}
 
 // Run as standalone script if called directly
 if (require.main === module) {
+  // Check for help flag first
+  if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    console.log('MIDI Validation Tool');
+    console.log('-------------------');
+    console.log('Usage: bun run validate-midi-hex.ts "4D 54 68 64..." [options]');
+    console.log('');
+    console.log('Options:');
+    console.log('  --help, -h: Show this help message');
+    console.log('  --quick: Only perform quick validation (faster)');
+    console.log('  --output=<path>: Save validation report to the specified path');
+    console.log('');
+    console.log('Examples:');
+    console.log('  bun run validate-midi-hex.ts "4D 54 68 64..."');
+    console.log('  bun run validate-midi-hex.ts "4D 54 68 64..." --quick');
+    console.log('  bun run validate-midi-hex.ts "4D 54 68 64..." --output=report.txt');
+    process.exit(0);
+  }
+  
   // Check if a file path is provided
   if (process.argv.length < 3) {
     console.error('Please provide a MIDI hex string or file with hex data');
@@ -179,6 +197,7 @@ if (require.main === module) {
     console.error('Options:');
     console.error('  --quick: Only perform quick validation (faster)');
     console.error('  --output=<path>: Save validation report to the specified path');
+    console.error('Run with --help for more information');
     process.exit(1);
   }
   

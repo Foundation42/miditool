@@ -105,10 +105,29 @@ export async function summarizeLogFile(
 
 // Run as standalone script if called directly
 if (require.main === module) {
+  // Check for help flag first
+  if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    console.log('Log Summarization Tool');
+    console.log('---------------------');
+    console.log('This tool summarizes log files to create human-friendly reports.');
+    console.log('');
+    console.log('Usage: bun run summarize-logs.ts <path-to-log-file> [output-path]');
+    console.log('');
+    console.log('Arguments:');
+    console.log('  <path-to-log-file>: Path to the log file to summarize');
+    console.log('  [output-path]: Optional path to save the summary (defaults to <input-file>.summary.txt)');
+    console.log('');
+    console.log('Examples:');
+    console.log('  bun run summarize-logs.ts logs/validation.log');
+    console.log('  bun run summarize-logs.ts logs/validation.log summary.txt');
+    process.exit(0);
+  }
+  
   // Check if a file path is provided
   if (process.argv.length < 3) {
     console.error('Please provide a log file path to summarize');
     console.error('Usage: bun run summarize-logs.ts <path-to-log-file> [output-path]');
+    console.error('Run with --help for more information');
     process.exit(1);
   }
   
