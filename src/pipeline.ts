@@ -19,15 +19,30 @@ const DEFAULT_STAGES: PipelineStageConfig[] = [
     name: "idea-generation",
     systemPrompt: `You are an expert music composer. Your task is to generate creative ideas for a MIDI clip
 based on the provided context (project, group, track). Respond with a detailed paragraph describing the musical 
-ideas that would work well for this context. Consider rhythm, melody, harmony, and how it fits into the overall project.`,
+ideas that would work well for this context. Consider rhythm, melody, harmony, and how it fits into the overall project.
+Include specific details about tempo, key, chord progressions, and melodic patterns.`,
     modelConfig: DEFAULT_LLM_CONFIG
   },
   {
     name: "midi-generation",
-    systemPrompt: `You are an expert MIDI composer. Your task is to generate a MIDI file based on the provided
-musical idea and context. Respond with a complete hex dump of a valid MIDI file. The hex dump should be
-formatted with bytes separated by spaces. Make sure the MIDI file starts with the header "4D 54 68 64" and
-follows the standard MIDI file format. Only include the hex bytes in your response, no explanations or text.`,
+    systemPrompt: `You are an expert MIDI composer and programmer who creates professional-quality MIDI files.
+Your task is to generate a MIDI file based on the provided musical idea and context.
+
+IMPORTANT: You must provide a complete, valid MIDI file in hex format. Format your response as a continuous 
+string of hexadecimal bytes separated by spaces. The file must:
+
+1. Start with the standard MIDI header "4D 54 68 64" (MThd)
+2. Include all required MIDI chunks (header chunk and at least one track chunk)
+3. End with an End of Track meta event (FF 2F 00)
+4. Set the correct instrument using Program Change events
+5. Include note-on and note-off events with appropriate velocities
+6. Use the appropriate tempo, time signature, and key signature
+
+Format your response like this:
+4D 54 68 64 00 00 00 06 00 01 00 01 00 60 4D 54 72 6B 00 00 00 14 00 90 3C 64 ...
+
+The MIDI file should follow the General MIDI standard and be properly formatted. Do not include any explanations,
+markdown code blocks, or any non-hex text in your response - ONLY provide the hex bytes of the MIDI file.`,
     modelConfig: DEFAULT_LLM_CONFIG
   }
 ];
@@ -182,10 +197,44 @@ CLIP:
     // Find hex pattern (4D 54 68 64 is MIDI header MThd)
     const midiHeaderIndex = response.indexOf("4D 54 68 64");
     if (midiHeaderIndex === -1) {
-      throw new Error("No valid MIDI data found in the response");
+      // Check for lowercase variant
+      const lowerCaseIndex = response.indexOf("4d 54 68 64");
+      if (lowerCaseIndex === -1) {
+        throw new Error("No valid MIDI data found in the response");
+      }
+      return response.slice(lowerCaseIndex).trim();
     }
     
-    return response.slice(midiHeaderIndex).trim();
+    // Find the end of the MIDI data (if there's any trailing text)
+    let endIndex = response.length;
+    
+    // Common end markers that might appear after the MIDI data
+    const endMarkers = [
+      "```", 
+      "Note:", 
+      "This MIDI file", 
+      "I've generated", 
+      "The above MIDI",
+      "\n\n"
+    ];
+    
+    for (const marker of endMarkers) {
+      const markerIndex = response.indexOf(marker, midiHeaderIndex + 10);
+      if (markerIndex !== -1 && markerIndex < endIndex) {
+        endIndex = markerIndex;
+      }
+    }
+    
+    // Extract the MIDI data and clean it
+    let midiHex = response.slice(midiHeaderIndex, endIndex).trim();
+    
+    // Clean up any non-hex characters
+    midiHex = midiHex.replace(/[^0-9A-Fa-f\s]/g, "");
+    
+    // Ensure proper spacing between bytes
+    midiHex = midiHex.replace(/\s+/g, " ");
+    
+    return midiHex;
   }
   
   /**

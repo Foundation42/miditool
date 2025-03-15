@@ -16,7 +16,9 @@
     "test-mistral": "bun run test-mistral.ts",
     "list-providers": "bun run index.ts list-providers",
     "test-openai": "bun run index.ts test-llm openai gpt-4-turbo",
-    "test-mistral-cli": "bun run index.ts test-llm mistral mistral-large-latest"
+    "test-mistral-cli": "bun run index.ts test-llm mistral mistral-large-latest",
+    "full-test": "bun run tests/full-pipeline-test.ts",
+    "play": "bun run index.ts play"
   },
   "dependencies": {
     "bunlib": "github:Foundation42/bunlib",

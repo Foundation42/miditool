@@ -89,6 +89,15 @@ export class MusicToolCLI {
         await this.generate(projectName, provider, model);
         break;
         
+      case "play":
+        if (commandArgs.length < 1) {
+          console.error("Error: MIDI file path is required");
+          this.showHelp();
+          return;
+        }
+        await this.playMidi(commandArgs[0]);
+        break;
+        
       case "list-providers":
         this.listProviders();
         break;
@@ -119,6 +128,7 @@ Commands:
   create-example               Create an example project
   generate <project> [provider] [model]  Generate MIDI for a project
   list-providers               List available LLM providers and their default models
+  play <file>                  Play a MIDI file (requires timidity or fluidsynth)
   help                         Show this help message
 
 Examples:
@@ -359,6 +369,88 @@ follows the standard MIDI file format. Only include the hex bytes in your respon
       console.log("✅ MIDI generation complete");
     } catch (error) {
       console.error("❌ Error generating MIDI:", error);
+    }
+  }
+  
+  /**
+   * Play a MIDI file using an external player
+   * 
+   * @param filePath - Path to the MIDI file
+   */
+  private async playMidi(filePath: string): Promise<void> {
+    console.log(`Attempting to play MIDI file: ${filePath}`);
+    
+    try {
+      // Check if the file exists and is a MIDI file
+      if (!existsSync(filePath)) {
+        console.error(`File does not exist: ${filePath}`);
+        return;
+      }
+      
+      if (!filePath.toLowerCase().endsWith('.mid') && !filePath.toLowerCase().endsWith('.midi')) {
+        console.warn(`Warning: File does not have a .mid or .midi extension: ${filePath}`);
+      }
+      
+      // Try different MIDI players in order of preference
+      const players = [
+        { cmd: "timidity", args: [filePath] },
+        { cmd: "fluidsynth", args: ["-i", filePath] },
+        { cmd: "pmidi", args: ["-p", "14:0", filePath] },
+        { cmd: "aplaymidi", args: [filePath] }
+      ];
+      
+      let success = false;
+      
+      for (const player of players) {
+        try {
+          console.log(`Trying to play with ${player.cmd}...`);
+          
+          // Try running the player and capture any errors
+          const result = await new Promise<{ exitCode: number, error?: Error }>((resolve) => {
+            const child = Bun.spawn({
+              cmd: [player.cmd, ...player.args],
+              stdout: "inherit",
+              stderr: "inherit"
+            });
+            
+            child.exited.then((exitCode) => {
+              resolve({ exitCode });
+            }).catch((error) => {
+              resolve({ exitCode: -1, error });
+            });
+          });
+          
+          if (result.exitCode === 0) {
+            console.log(`✅ Successfully played MIDI file with ${player.cmd}`);
+            success = true;
+            break;
+          } else {
+            console.log(`❌ Failed to play with ${player.cmd} (exit code: ${result.exitCode})`);
+          }
+        } catch (error) {
+          console.log(`❌ Error trying to play with ${player.cmd}: ${error}`);
+        }
+      }
+      
+      if (!success) {
+        console.error(`
+Could not play MIDI file. Please install one of the following MIDI players:
+  - timidity
+  - fluidsynth
+  - pmidi
+  - aplaymidi
+
+On Ubuntu/Debian, you can install with:
+  sudo apt-get install timidity
+
+On macOS with Homebrew:
+  brew install timidity
+
+Or use any other MIDI player of your choice to play the file manually.
+`);
+      }
+    } catch (error) {
+      console.error(`Error playing MIDI file:`, error);
     }
   }
 }
